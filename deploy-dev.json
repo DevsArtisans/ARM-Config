@@ -22,6 +22,14 @@
             "defaultValue": "3b502d7",
             "type": "String"
         },
+        "acrUsername": {
+            "defaultValue": "<tu_acr_username>",
+            "type": "String"
+        },
+        "acrPassword": {
+            "defaultValue": "<tu_acr_password>",
+            "type": "SecureString"
+        },
         "neo4jUri": {
             "defaultValue": "neo4j://161.132.37.250:7687",
             "type": "String"
@@ -49,6 +57,8 @@
                 "siteConfig": {
                     "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
                     "acrUseManagedIdentityCreds": false,
+                    "acrUsername": "[parameters('acrUsername')]",
+                    "acrPassword": "[parameters('acrPassword')]",
                     "alwaysOn": false,
                     "http20Enabled": false,
                     "minimumElasticInstanceCount": 0,
@@ -105,6 +115,8 @@
             "properties": {
                 "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
                 "acrUseManagedIdentityCreds": false,
+                "acrUsername": "[parameters('acrUsername')]",
+                "acrPassword": "[parameters('acrPassword')]",
                 "http20Enabled": false,
                 "minTlsVersion": "1.2",
                 "scmMinTlsVersion": "1.2",
@@ -147,4 +159,3 @@
         }
     ]
 }
-
