@@ -19,7 +19,7 @@
       "type": "String"
     },
     "containerImageTag": {
-      "defaultValue": "bebaee8",
+      "defaultValue": "4717fcd",
       "type": "String"
     }
   },
