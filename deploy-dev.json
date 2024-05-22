@@ -22,14 +22,6 @@
             "defaultValue": "3b502d7",
             "type": "String"
         },
-        "acrUsername": {
-            "defaultValue": "<tu_acr_username>",
-            "type": "String"
-        },
-        "acrPassword": {
-            "defaultValue": "<tu_acr_password>",
-            "type": "SecureString"
-        },
         "neo4jUri": {
             "defaultValue": "neo4j://161.132.37.250:7687",
             "type": "String"
@@ -51,14 +43,15 @@
             "name": "[parameters('sites_GCSWDevEnv_name')]",
             "location": "East US",
             "kind": "app,linux,container",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "enabled": true,
                 "serverFarmId": "[parameters('serverfarms_ASP_RGDevEnvironment_b5ac_externalid')]",
                 "siteConfig": {
                     "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
-                    "acrUseManagedIdentityCreds": false,
-                    "acrUsername": "[parameters('acrUsername')]",
-                    "acrPassword": "[parameters('acrPassword')]",
+                    "acrUseManagedIdentityCreds": true,
                     "alwaysOn": false,
                     "http20Enabled": false,
                     "minimumElasticInstanceCount": 0,
@@ -114,9 +107,7 @@
             ],
             "properties": {
                 "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
-                "acrUseManagedIdentityCreds": false,
-                "acrUsername": "[parameters('acrUsername')]",
-                "acrPassword": "[parameters('acrPassword')]",
+                "acrUseManagedIdentityCreds": true,
                 "http20Enabled": false,
                 "minTlsVersion": "1.2",
                 "scmMinTlsVersion": "1.2",
@@ -159,3 +150,4 @@
         }
     ]
 }
+
