@@ -1,0 +1,26 @@
+name: Deploy To Dev
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy ARM template
+        uses: azure/arm-deploy@v1
+        with:
+          scope: 'resourceGroup'
+          subscriptionId: 'c6da6455-5921-4b37-b1e8-c8a8bc0652cb'
+          resourceGroupName: 'RG-Dev-Environment'
+          template: 'deploy-dev.json'
