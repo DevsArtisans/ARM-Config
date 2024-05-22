@@ -21,6 +21,18 @@
         "containerImageTag": {
             "defaultValue": "3b502d7",
             "type": "String"
+        },
+        "neo4jUri": {
+            "defaultValue": "neo4j://161.132.37.250:7687",
+            "type": "String"
+        },
+        "neo4jUser": {
+            "defaultValue": "neo4j",
+            "type": "String"
+        },
+        "neo4jPassword": {
+            "defaultValue": "neo4jgcswtest",
+            "type": "String"
         }
     },
     "variables": {},
@@ -39,7 +51,21 @@
                     "acrUseManagedIdentityCreds": false,
                     "alwaysOn": false,
                     "http20Enabled": false,
-                    "minimumElasticInstanceCount": 0
+                    "minimumElasticInstanceCount": 0,
+                    "appSettings": [
+                        {
+                            "name": "NEO4J_URI",
+                            "value": "[parameters('neo4jUri')]"
+                        },
+                        {
+                            "name": "NEO4J_USER",
+                            "value": "[parameters('neo4jUser')]"
+                        },
+                        {
+                            "name": "NEO4J_PASSWORD",
+                            "value": "[parameters('neo4jPassword')]"
+                        }
+                    ]
                 },
                 "httpsOnly": true
             }
