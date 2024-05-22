@@ -20,7 +20,7 @@ jobs:
       - name: Deploy ARM template
         uses: azure/arm-deploy@v1
         with:
-          scope: 'resourceGroup'
+          scope: 'resourcegroup'
           subscriptionId: 'c6da6455-5921-4b37-b1e8-c8a8bc0652cb'
           resourceGroupName: 'RG-Dev-Environment'
           template: 'deploy-dev.json'
