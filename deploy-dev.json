@@ -1,153 +1,152 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "sites_GCSWDevEnv_name": {
-            "defaultValue": "GCSWDevEnv",
-            "type": "String"
-        },
-        "serverfarms_ASP_RGDevEnvironment_b5ac_externalid": {
-            "defaultValue": "/subscriptions/c6da6455-5921-4b37-b1e8-c8a8bc0652cb/resourceGroups/RG-Dev-Environment/providers/Microsoft.Web/serverfarms/ASP-RGDevEnvironment-b5ac",
-            "type": "String"
-        },
-        "containerRegistryServer": {
-            "defaultValue": "gcswdev.azurecr.io",
-            "type": "String"
-        },
-        "containerImageName": {
-            "defaultValue": "gcswdev/gcsw-app",
-            "type": "String"
-        },
-        "containerImageTag": {
-            "defaultValue": "3b502d7",
-            "type": "String"
-        },
-        "neo4jUri": {
-            "defaultValue": "neo4j://161.132.37.250:7687",
-            "type": "String"
-        },
-        "neo4jUser": {
-            "defaultValue": "neo4j",
-            "type": "String"
-        },
-        "neo4jPassword": {
-            "defaultValue": "neo4jgcswtest",
-            "type": "String"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sites_GCSWDevEnv_name": {
+      "defaultValue": "GCSWDevEnv",
+      "type": "String"
     },
-    "variables": {},
-    "resources": [
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2023-01-01",
-            "name": "[parameters('sites_GCSWDevEnv_name')]",
-            "location": "East US",
-            "kind": "app,linux,container",
-            "identity": {
-                "type": "SystemAssigned"
+    "serverfarms_ASP_RGDevEnvironment_b5ac_externalid": {
+      "defaultValue": "/subscriptions/c6da6455-5921-4b37-b1e8-c8a8bc0652cb/resourceGroups/RG-Dev-Environment/providers/Microsoft.Web/serverfarms/ASP-RGDevEnvironment-b5ac",
+      "type": "String"
+    },
+    "containerRegistryServer": {
+      "defaultValue": "gcswdev.azurecr.io",
+      "type": "String"
+    },
+    "containerImageName": {
+      "defaultValue": "gcswdev/gcsw-app",
+      "type": "String"
+    },
+    "containerImageTag": {
+      "defaultValue": "90e55be",
+      "type": "String"
+    },
+    "neo4jUri": {
+      "defaultValue": "neo4j://161.132.37.250:7687",
+      "type": "String"
+    },
+    "neo4jUser": {
+      "defaultValue": "neo4j",
+      "type": "String"
+    },
+    "neo4jPassword": {
+      "defaultValue": "neo4jgcswtest",
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2023-01-01",
+      "name": "[parameters('sites_GCSWDevEnv_name')]",
+      "location": "East US",
+      "kind": "app,linux,container",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "enabled": true,
+        "serverFarmId": "[parameters('serverfarms_ASP_RGDevEnvironment_b5ac_externalid')]",
+        "siteConfig": {
+          "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
+          "acrUseManagedIdentityCreds": true,
+          "alwaysOn": false,
+          "http20Enabled": false,
+          "minimumElasticInstanceCount": 0,
+          "appSettings": [
+            {
+              "name": "NEO4J_URI",
+              "value": "[parameters('neo4jUri')]"
             },
-            "properties": {
-                "enabled": true,
-                "serverFarmId": "[parameters('serverfarms_ASP_RGDevEnvironment_b5ac_externalid')]",
-                "siteConfig": {
-                    "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
-                    "acrUseManagedIdentityCreds": true,
-                    "alwaysOn": false,
-                    "http20Enabled": false,
-                    "minimumElasticInstanceCount": 0,
-                    "appSettings": [
-                        {
-                            "name": "NEO4J_URI",
-                            "value": "[parameters('neo4jUri')]"
-                        },
-                        {
-                            "name": "NEO4J_USER",
-                            "value": "[parameters('neo4jUser')]"
-                        },
-                        {
-                            "name": "NEO4J_PASSWORD",
-                            "value": "[parameters('neo4jPassword')]"
-                        }
-                    ]
-                },
-                "httpsOnly": true
+            {
+              "name": "NEO4J_USER",
+              "value": "[parameters('neo4jUser')]"
+            },
+            {
+              "name": "NEO4J_PASSWORD",
+              "value": "[parameters('neo4jPassword')]"
             }
+          ]
         },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2023-01-01",
-            "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/ftp')]",
-            "location": "East US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
-            ],
-            "properties": {
-                "allow": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-            "apiVersion": "2023-01-01",
-            "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/scm')]",
-            "location": "East US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
-            ],
-            "properties": {
-                "allow": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2023-01-01",
-            "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/web')]",
-            "location": "East US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
-            ],
-            "properties": {
-                "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
-                "acrUseManagedIdentityCreds": true,
-                "http20Enabled": false,
-                "minTlsVersion": "1.2",
-                "scmMinTlsVersion": "1.2",
-                "ftpsState": "FtpsOnly",
-                "ipSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictions": [
-                    {
-                        "ipAddress": "Any",
-                        "action": "Allow",
-                        "priority": 2147483647,
-                        "name": "Allow all",
-                        "description": "Allow all access"
-                    }
-                ],
-                "scmIpSecurityRestrictionsUseMain": false,
-                "httpsOnly": true,
-                "publicNetworkAccess": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2023-01-01",
-            "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/', parameters('sites_GCSWDevEnv_name'), '.azurewebsites.net')]",
-            "location": "East US",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
-            ],
-            "properties": {
-                "siteName": "[parameters('sites_GCSWDevEnv_name')]",
-                "hostNameType": "Verified"
-            }
-        }
-    ]
+        "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/ftp')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
+      ],
+      "properties": {
+        "allow": false
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/scm')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
+      ],
+      "properties": {
+        "allow": false
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/web')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
+      ],
+      "properties": {
+        "linuxFxVersion": "[concat('DOCKER|', parameters('containerRegistryServer'), '/', parameters('containerImageName'), ':', parameters('containerImageTag'))]",
+        "acrUseManagedIdentityCreds": true,
+        "http20Enabled": false,
+        "minTlsVersion": "1.2",
+        "scmMinTlsVersion": "1.2",
+        "ftpsState": "FtpsOnly",
+        "ipSecurityRestrictions": [
+          {
+            "ipAddress": "Any",
+            "action": "Allow",
+            "priority": 2147483647,
+            "name": "Allow all",
+            "description": "Allow all access"
+          }
+        ],
+        "scmIpSecurityRestrictions": [
+          {
+            "ipAddress": "Any",
+            "action": "Allow",
+            "priority": 2147483647,
+            "name": "Allow all",
+            "description": "Allow all access"
+          }
+        ],
+        "scmIpSecurityRestrictionsUseMain": false,
+        "httpsOnly": true,
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(parameters('sites_GCSWDevEnv_name'), '/', parameters('sites_GCSWDevEnv_name'), '.azurewebsites.net')]",
+      "location": "East US",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_GCSWDevEnv_name'))]"
+      ],
+      "properties": {
+        "siteName": "[parameters('sites_GCSWDevEnv_name')]",
+        "hostNameType": "Verified"
+      }
+    }
+  ]
 }
-
