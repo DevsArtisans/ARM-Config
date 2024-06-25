@@ -19,7 +19,7 @@
       "type": "String"
     },
     "containerImageTag": {
-      "defaultValue": "c95fbd7",
+      "defaultValue": "908591c",
       "type": "String"
     },
     "neo4jUri": {
